@@ -1,0 +1,38 @@
+@font-face {
+	font-family: "Rodin";
+	src: url("./lib/assets/font/rodin.otf") format("opentype");
+	font-display: swap;
+}
+
+body {
+	font-family: "Rodin", sans-serif;
+}
+
+img {
+	user-select: none;
+	-webkit-user-drag: none;
+	image-rendering: pixelated;
+	user-select: none;
+}
+
+button {
+	margin: 0;
+	padding: 0;
+	border: none;
+	background: none;
+	font: inherit;
+	color: inherit;
+	cursor: pointer;
+}
+
+.theme-bg {
+	background-color: #faa000;
+}
+
+.button:active {
+	transform: translateY(5px) scale(1.012);
+	transition: all;
+	transition-duration: 50ms;
+	transition-timing-function: ease-out;
+
+}
