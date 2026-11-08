@@ -3,6 +3,7 @@
     import PhotoPanel from "../components/photo-panel.svelte";
     import SettingsDialog from "../components/settings-dialog.svelte";
     import { settings } from "#lib/stores/settings.svelte.ts";
+    import Introduction from "../components/introduction.svelte";
 </script>
 
 <svelte:head>
@@ -10,6 +11,7 @@
 </svelte:head>
 
 <main class="screen" style:background-color={settings.themeColor}>
+	<Introduction />
 	{#if settings.settingsOpen}
 		<SettingsDialog />
 	{/if}
