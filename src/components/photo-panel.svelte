@@ -6,6 +6,33 @@
     import Media from "./media.svelte";
     import MediaModal from "./media-modal.svelte";
     import { settings } from "#lib/stores/settings.svelte.ts";
+    import { ZOOM_DURATION } from "#lib/stores/zoomingAnim.svelte.ts";
+
+    let grid: HTMLDivElement;
+    let before: DOMRect[] = [];
+
+    $effect.pre(() => {
+        settings.zoomMode;
+        if (!grid) return;
+        before = Array.from(grid.children, (el) => el.getBoundingClientRect());
+    });
+
+    $effect(() => {
+        settings.zoomMode;
+        Array.from(grid.children).forEach((el, i) => {
+            const from = before[i];
+            if (!from) return;
+            const to = el.getBoundingClientRect();
+            el.animate([
+                {
+                    transformOrigin: "top left",
+                    transform: `translate(${from.left - to.left}px, ${from.top - to.top}px) scale(${from.width / to.width}, ${from.height / to.height})`
+                },
+                { transformOrigin: "top left", transform: "none" }
+            ], { duration: ZOOM_DURATION, easing: "linear" });
+        });
+        before = [];
+    });
 
     let selectedId = $state(-1);
     let modalOpen = $state(false);
@@ -61,7 +88,7 @@
 
 <div class="photo-panel">
     <div class="bg">
-        <div class="photos zoom-{settings.zoomMode}">
+        <div class="photos zoom-{settings.zoomMode}" bind:this={grid}>
             {#each slots as media, index}
                 <Media id={index} url={media} selected={index === selectedId} changeSelected={changeSelected} zoomMode={settings.zoomMode} />
             {/each}

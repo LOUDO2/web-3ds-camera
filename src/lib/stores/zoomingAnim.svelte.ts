@@ -1,3 +1,5 @@
+export const ZOOM_DURATION = 200;
+
 let zooming = $state(false);
 
 export function isZooming() {
@@ -8,5 +10,5 @@ export function animZoom() {
     zooming = true;
     setTimeout(() => {
         zooming = false;
-    }, 200)
+    }, ZOOM_DURATION)
 }
