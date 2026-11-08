@@ -1,13 +1,18 @@
 <script lang="ts">
 	import Footer from "../components/footer.svelte";
     import PhotoPanel from "../components/photo-panel.svelte";
+    import SettingsDialog from "../components/settings-dialog.svelte";
+    import { settings } from "#lib/stores/settings.svelte.ts";
 </script>
 
 <svelte:head>
 	<title>3DS Camera</title>
 </svelte:head>
 
-<main class="screen theme-bg">
+<main class="screen" style:background-color={settings.themeColor}>
+	{#if settings.settingsOpen}
+		<SettingsDialog />
+	{/if}
 	<PhotoPanel />
 	<Footer />
 </main>

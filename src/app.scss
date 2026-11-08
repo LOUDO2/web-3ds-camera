@@ -25,10 +25,6 @@ button {
 	cursor: pointer;
 }
 
-.theme-bg {
-	background-color: #faa000;
-}
-
 .button:active {
 	transform: translateY(5px) scale(1.012);
 	transition: all;

@@ -58,7 +58,7 @@
 
 <div class="slider">
     <div class="background">
-        <div class="border fill theme-bg" style:mask-image="url({Border})"></div>
+        <div class="border fill" style:background-color={settings.themeColor} style:mask-image="url({Border})"></div>
         <img src={BorderEdge} class="border border-edge" alt="">
 
         <div class="line">
