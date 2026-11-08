@@ -5,18 +5,54 @@
     import ArrowRight from "#lib/assets/images/slider/arrow-right.png"
     import ZoomIn from "#lib/assets/images/zoom/zoom-in.png"
     import ZoomOut from "#lib/assets/images/zoom/zoom-out.png"
+    import Marker from "#lib/assets/images/slider/marker.png"
+    import Thumb from "#lib/assets/images/slider/thumb.png"
+    import ThumbSlot from "#lib/assets/images/slider/thumb-slot.png"
     import { settings } from "#lib/stores/settings.svelte.ts";
     import { animZoom, isZooming } from "#lib/stores/zoomingAnim.svelte.ts";
+    import { album, dragBy, maxScroll, rate, release, selectedRate, setZoom, step } from "#lib/stores/album.svelte.ts";
+    import { velocityTracker } from "#lib/drag.ts";
 
     function changeZoom(mode: string) {
         if (isZooming()) return;
         if (settings.zoomMode == 1 && mode === "plus" || settings.zoomMode == 3 && mode === "minus") return;
         animZoom()
         if (mode === "plus") {
-            settings.zoomMode = Math.max(settings.zoomMode - 1, 1)
+            setZoom(Math.max(settings.zoomMode - 1, 1))
         } else if (mode === "minus") {
-            settings.zoomMode = Math.min(settings.zoomMode + 1, 3)
+            setZoom(Math.min(settings.zoomMode + 1, 3))
         }
+    }
+
+    let rail: HTMLDivElement;
+    let cursor: HTMLDivElement;
+    let dragging = $state(false);
+    const tracker = velocityTracker();
+
+    function pagesPerPixel() {
+        return maxScroll() / rail.clientWidth;
+    }
+
+    function onpointerdown(event: PointerEvent) {
+        if (!cursor.contains(event.target as Node)) {
+            const box = cursor.getBoundingClientRect();
+            step(event.clientX < box.left + box.width / 2 ? -1 : 1);
+            return;
+        }
+        dragging = true;
+        rail.setPointerCapture(event.pointerId);
+        tracker.start(event.clientX);
+    }
+
+    function onpointermove(event: PointerEvent) {
+        if (!dragging) return;
+        dragBy(tracker.move(event.clientX) * pagesPerPixel());
+    }
+
+    function onpointerup() {
+        if (!dragging) return;
+        dragging = false;
+        release(tracker.end() * pagesPerPixel());
     }
 </script>
 
@@ -30,8 +66,30 @@
                 <img src={ZoomIn} class="zoom zoom-in {(settings.zoomMode > 1 && !isZooming()) && 'click'} {settings.zoomMode === 1 && 'disabled'}" alt="Zoom In" />
             </button>
             <div class="track">
-                <img src={ArrowLeft} alt="Arrow Left" class="track-left" />
-                <img src={ArrowRight} alt="Arrow Right" class="track-right" />
+                <button onclick={() => step(-1)}>
+                    <img src={ArrowLeft} alt="Arrow Left" class="track-left" />
+                </button>
+                <div
+                    class="rail"
+                    bind:this={rail}
+                    role="presentation"
+                    {onpointerdown}
+                    {onpointermove}
+                    {onpointerup}
+                    onpointercancel={onpointerup}
+                    ondragstart={(e) => e.preventDefault()}
+                >
+                    <img src={ThumbSlot} alt="" class="slot" style:left="{rate() * 100}%" />
+                    {#if album.selected !== -1}
+                        <img src={Marker} alt="" class="marker" style:left="{selectedRate() * 100}%" />
+                    {/if}
+                    <div class="cursor" class:held={dragging} bind:this={cursor} style:left="{rate() * 100}%">
+                        <img src={Thumb} alt="" />
+                    </div>
+                </div>
+                <button onclick={() => step(1)}>
+                    <img src={ArrowRight} alt="Arrow Right" class="track-right" />
+                </button>
             </div>
             <button onclick={() => changeZoom('minus')}>
                 <img src={ZoomOut} class="zoom zoom-out {(settings.zoomMode < 3 && !isZooming()) && 'click'} {settings.zoomMode === 3 && 'disabled'}" alt="Zoom Out" />
@@ -91,6 +149,46 @@
                         height: auto;
                         flex: none;
                         image-rendering: pixelated;
+                    }
+
+                    .rail {
+                        position: relative;
+                        flex: 1;
+                        align-self: stretch;
+                        margin-inline: calc(8 * var(--px));
+                        touch-action: none;
+                        user-select: none;
+
+                        .slot, .marker, .cursor {
+                            position: absolute;
+                            top: 50%;
+                            translate: -50% -50%;
+                        }
+
+                        .slot, .marker {
+                            pointer-events: none;
+                        }
+
+                        .slot {
+                            width: calc(8 * var(--px));
+                        }
+
+                        .marker {
+                            width: calc(10 * var(--px));
+                        }
+
+                        .cursor {
+                            margin-top: calc(1 * var(--px));
+                            transition: scale 50ms;
+
+                            img {
+                                width: calc(18 * var(--px));
+                            }
+
+                            &.held {
+                                scale: 1 1.2;
+                            }
+                        }
                     }
                 }
 
