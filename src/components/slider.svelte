@@ -20,6 +20,7 @@
         if (settings.zoomMode == 1 && mode === "plus" || settings.zoomMode == 3 && mode === "minus") return;
         animZoom()
         playSound(mode === "plus" ? SOUNDS.photo.zoomIn : SOUNDS.photo.zoomOut)
+        playSound(SOUNDS.button.press)
         if (mode === "plus") {
             setZoom(Math.max(settings.zoomMode - 1, 1))
         } else if (mode === "minus") {
