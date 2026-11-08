@@ -1,5 +1,6 @@
 <script lang="ts">
     import { fade } from "svelte/transition";
+    import { SOUNDS, playMusic, playSound } from "#lib/sounds.ts";
 
     import BirdIdle from "#lib/assets/images/bird/wait/1.png"
     import BirdFly1 from "#lib/assets/images/bird/fly/1.png"
@@ -35,11 +36,14 @@
     })
 
     function arrived(event: AnimationEvent) {
-        if (event.target === event.currentTarget) isIdle = true
+        if (event.target !== event.currentTarget) return
+        isIdle = true
     }
 
     function dismiss() {
         if (!isIdle) return
+        playSound(SOUNDS.bird[1])
+        playMusic()
         visible = false
     }
 

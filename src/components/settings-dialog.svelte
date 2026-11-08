@@ -5,14 +5,24 @@
     import ImportButton from "#lib/assets/images/ui/import-images.png"
     import { settings } from "#lib/stores/settings.svelte.ts";
     import { importMedias as storeMedias } from "#lib/stores/album.svelte.ts";
+    import { SOUNDS, playSound } from "#lib/sounds.ts";
 
     let closing = $state(false);
 
+    $effect(() => {
+        playSound(SOUNDS.dialog.open);
+        playSound(SOUNDS.button.press)
+    });
+
     function close() {
+        if (closing) return;
+        playSound(SOUNDS.dialog.close);
+        playSound(SOUNDS.button.press)
         closing = true;
     }
 
     function resetColor() {
+        playSound(SOUNDS.button.press);
         settings.themeColor = "#faa000"; 
         localStorage.setItem("themeColor", settings.themeColor)
     }
@@ -22,6 +32,7 @@
     }
 
     function importMedias() {
+        playSound(SOUNDS.button.press);
         const input = document.createElement("input");
         input.type = "file";
         input.accept = "image/*,video/*";

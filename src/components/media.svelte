@@ -12,6 +12,7 @@
     import EmptySlot from "#lib/assets/images/media/empty-slot-large.png"
     import type { MediaType } from "#lib/assets/types.ts";
     import { isZooming } from "#lib/stores/zoomingAnim.svelte.ts";
+    import { SOUNDS, playSound } from "#lib/sounds.ts";
 
     let { id, url, selected = false, isVideo = false, changeSelected, zoomMode }: MediaType = $props();
 
@@ -23,9 +24,14 @@
 
     let sprites = $derived(SPRITES[zoomMode as 1 | 2 | 3] ?? SPRITES[1]);
 
+    function onclick() {
+        if (url) playSound(SOUNDS.button.touch);
+        changeSelected(id, true);
+    }
+
 </script>
 
-<button class="frame" class:empty={!url} style="--w: {sprites.w}; --h: {sprites.h}" onclick={() => changeSelected(id, true)}>
+<button class="frame" class:empty={!url} style="--w: {sprites.w}; --h: {sprites.h}" {onclick}>
     {#if !url}
         <img src={EmptySlot} alt="" class="border {isZooming() && "hidden"}" />
     {:else}

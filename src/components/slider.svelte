@@ -13,11 +13,13 @@
     import { album, dragBy, maxScroll, rate, release, selectedRate, setZoom, step } from "#lib/stores/album.svelte.ts";
     import { velocityTracker } from "#lib/drag.ts";
     import Bird from "./bird.svelte";
+    import { SOUNDS, playSound } from "#lib/sounds.ts";
 
     function changeZoom(mode: string) {
         if (isZooming()) return;
         if (settings.zoomMode == 1 && mode === "plus" || settings.zoomMode == 3 && mode === "minus") return;
         animZoom()
+        playSound(mode === "plus" ? SOUNDS.photo.zoomIn : SOUNDS.photo.zoomOut)
         if (mode === "plus") {
             setZoom(Math.max(settings.zoomMode - 1, 1))
         } else if (mode === "minus") {
@@ -29,6 +31,14 @@
     let cursor: HTMLDivElement;
     let dragging = $state(false);
     const tracker = velocityTracker();
+    let lastPage = Math.round(album.scroll);
+
+    $effect(() => {
+        const page = Math.round(album.scroll);
+        if (page === lastPage) return;
+        lastPage = page;
+        playSound(SOUNDS.slider.tick);
+    });
 
     function pagesPerPixel() {
         return maxScroll() / rail.clientWidth;
@@ -41,6 +51,7 @@
             return;
         }
         dragging = true;
+        playSound(SOUNDS.button.press);
         rail.setPointerCapture(event.pointerId);
         tracker.start(event.clientX);
     }

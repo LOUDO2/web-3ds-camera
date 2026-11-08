@@ -6,6 +6,7 @@ import { settings } from "./settings.svelte.ts";
 import type { AlbumMedia } from "#lib/assets/types.ts";
 import { loadFiles, saveFiles } from "#lib/media-db.ts";
 import { browser } from "$app/env";
+import { playSound, SOUNDS } from "#lib/sounds.ts";
 
 const PER_PAGE: Record<number, number> = { 1: 6, 2: 12, 3: 20 };
 const MOMENTUM_MS = 250;
@@ -86,6 +87,7 @@ export function scrollTo(page: number) {
 }
 
 export function step(direction: number) {
+    playSound(SOUNDS.button.press)
     scrollTo(target + direction);
 }
 

@@ -4,8 +4,15 @@
     import VideoFrameLarge from "#lib/assets/images/media/video-strip-large.png"
     import ArrowLeft from "./arrow-left.svelte";
     import ArrowRight from "./arrow-right.svelte";
+    import { pauseMusic, resumeMusic } from "#lib/sounds.ts";
 
     let { url, isVideo = false, index, count, changeSelected, onclose }: { url: string, isVideo?: boolean, index: number, count: number, changeSelected: (id: number, openModal: boolean) => void, onclose: () => void } = $props();
+
+    $effect(() => {
+        if (!isVideo) return;
+        pauseMusic();
+        return resumeMusic;
+    });
 
 </script>
 
