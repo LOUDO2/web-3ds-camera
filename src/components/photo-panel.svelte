@@ -120,7 +120,7 @@
                 <div class="bg">
                     <div class="photos zoom-{settings.zoomMode}">
                         {#each page as index (index)}
-                            <Media id={index} url={album.medias[index]} selected={index === album.selected} changeSelected={changeSelected} zoomMode={settings.zoomMode} />
+                            <Media id={index} url={album.medias[index]?.url} selected={index === album.selected} changeSelected={changeSelected} zoomMode={settings.zoomMode} isVideo={album.medias[index]?.type === "video"} />
                         {/each}
                     </div>
                 </div>
@@ -130,7 +130,7 @@
 </div>
 
 {#if modalOpen && album.selected !== -1}
-    <MediaModal url={album.medias[album.selected]} index={album.selected} count={album.medias.length} changeSelected={changeSelected} onclose={() => modalOpen = false} />
+    <MediaModal url={album.medias[album.selected]?.url} isVideo={album.medias[album.selected]?.type === "video"} index={album.selected} count={album.medias.length} changeSelected={changeSelected} onclose={() => modalOpen = false} />
 {/if}
 
 <style lang="scss">

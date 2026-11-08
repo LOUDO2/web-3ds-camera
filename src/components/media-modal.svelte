@@ -14,7 +14,7 @@
     <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
     <div class="frame" onclick={(e) => e.stopPropagation()}>
         {#if isVideo}
-            <video src={url} class="media" controls playsinline></video>
+            <video src={url} class="media video" controls playsinline></video>
         {:else}
             <img src={url} alt="" class="media" />
         {/if}
@@ -87,6 +87,13 @@
             animation-name: imageFade;
             animation-duration: 200ms;
             animation-timing-function: ease-out;
+
+            &.video {
+                left: calc(12 / 66 * 100%);
+                top: calc(7 / 52 * 100%);
+                width: calc(40 / 66 * 100%);
+                height: calc(36 / 52 * 100%);
+            }
         }
 
         .border {

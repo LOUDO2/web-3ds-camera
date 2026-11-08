@@ -1,3 +1,8 @@
+export interface AlbumMedia {
+    url: string
+    type: "photo" | "video"
+}
+
 export interface MediaType {
     id: number
     url?: string

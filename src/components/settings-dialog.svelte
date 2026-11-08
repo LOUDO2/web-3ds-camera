@@ -2,7 +2,9 @@
     import DialogSettings from "#lib/assets/images/ui/dialog.png"
     import CloseButton from "#lib/assets/images/ui/close-button.png"
     import ResetButton from "#lib/assets/images/ui/reset-button.png"
+    import ImportButton from "#lib/assets/images/ui/import-images.png"
     import { settings } from "#lib/stores/settings.svelte.ts";
+    import { importMedias as storeMedias } from "#lib/stores/album.svelte.ts";
 
     let closing = $state(false);
 
@@ -17,6 +19,20 @@
 
     function onAnimationEnd() {
         if (closing) settings.settingsOpen = false;
+    }
+
+    function importMedias() {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = "image/*,video/*";
+        input.multiple = true;
+        input.onchange = () => {
+            const files = Array.from(input.files ?? []);
+            if (files.length === 0) return;
+            storeMedias(files);
+            close();
+        };
+        input.click();
     }
 
 </script>
@@ -34,6 +50,9 @@
                 </button>
                 <button class="button close-button" aria-label="Close button" onclick={close}>
                     <img src={CloseButton} alt="" />
+                </button>
+                <button class="button import-button" aria-label="Import button" onclick={importMedias}>
+                    <img src={ImportButton} alt="" />
                 </button>
             </div>
         </div>
@@ -150,6 +169,13 @@
                     top: calc(100% * 41.5 / 230);
                     left: calc(100% * 131 / 308);
                     width: calc(100% * 50 / 308);
+                }
+
+                .import-button {
+                    position: absolute;
+                    bottom: 38%;
+                    left: 35%;
+                    width: 28.6%;
                 }
             }
         }

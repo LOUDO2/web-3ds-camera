@@ -1,17 +1,42 @@
 import Cat from "#lib/assets/images/placeholders/cat.png"
 import Cat2 from "#lib/assets/images/placeholders/cat_2.png"
 import Cat3 from "#lib/assets/images/placeholders/cat_3.png"
+import Cat4 from "#lib/assets/images/placeholders/nya.mp4"
 import { settings } from "./settings.svelte.ts";
+import type { AlbumMedia } from "#lib/assets/types.ts";
+import { loadFiles, saveFiles } from "#lib/media-db.ts";
+import { browser } from "$app/env";
 
 const PER_PAGE: Record<number, number> = { 1: 6, 2: 12, 3: 20 };
 const MOMENTUM_MS = 250;
 const SETTLE_MS = 70;
 
 export const album = $state({
-    medias: Array.from([Cat, Cat2, Cat3]),
+    medias: [
+        { url: Cat, type: "photo" },
+        { url: Cat2, type: "photo" },
+        { url: Cat3, type: "photo" },
+        { url: Cat4, type: "video" },
+    ] as AlbumMedia[],
     scroll: 0,
     selected: -1
 });
+
+function toMedia(file: Blob): AlbumMedia {
+    return {
+        url: URL.createObjectURL(file),
+        type: file.type.startsWith("video/") ? "video" : "photo"
+    };
+}
+
+export async function importMedias(files: File[]) {
+    album.medias.push(...files.map(toMedia));
+    await saveFiles(files);
+}
+
+if (browser) {
+    loadFiles().then((files) => album.medias.push(...files.map(toMedia)));
+}
 
 let target = 0;
 let frame = 0;
