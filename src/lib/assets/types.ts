@@ -4,4 +4,5 @@ export interface MediaType {
     selected?: boolean
     isVideo?: boolean
     changeSelected: Function
+    zoomMode: number
 }

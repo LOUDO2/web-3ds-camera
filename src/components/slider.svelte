@@ -5,6 +5,19 @@
     import ArrowRight from "#lib/assets/images/slider/arrow-right.png"
     import ZoomIn from "#lib/assets/images/zoom/zoom-in.png"
     import ZoomOut from "#lib/assets/images/zoom/zoom-out.png"
+    import { settings } from "#lib/stores/settings.svelte.ts";
+    import { animZoom, isZooming } from "#lib/stores/zoomingAnim.svelte.ts";
+
+    function changeZoom(mode: string) {
+        if (isZooming()) return;
+        if (settings.zoomMode == 1 && mode === "plus" || settings.zoomMode == 3 && mode === "minus") return;
+        animZoom()
+        if (mode === "plus") {
+            settings.zoomMode = Math.max(settings.zoomMode - 1, 1)
+        } else if (mode === "minus") {
+            settings.zoomMode = Math.min(settings.zoomMode + 1, 3)
+        }
+    }
 </script>
 
 <div class="slider">
@@ -13,12 +26,16 @@
         <img src={BorderEdge} class="border border-edge" alt="">
 
         <div class="line">
-            <img src={ZoomIn} class="zoom zoom-in" alt="Zoom In" />
+            <button onclick={() => changeZoom('plus')}>
+                <img src={ZoomIn} class="zoom zoom-in {(settings.zoomMode > 1 && !isZooming()) && 'click'} {settings.zoomMode === 1 && 'disabled'}" alt="Zoom In" />
+            </button>
             <div class="track">
                 <img src={ArrowLeft} alt="Arrow Left" class="track-left" />
                 <img src={ArrowRight} alt="Arrow Right" class="track-right" />
             </div>
-            <img src={ZoomOut} class="zoom zoom-out" alt="Zoom Out" />
+            <button onclick={() => changeZoom('minus')}>
+                <img src={ZoomOut} class="zoom zoom-out {(settings.zoomMode < 3 && !isZooming()) && 'click'} {settings.zoomMode === 3 && 'disabled'}" alt="Zoom Out" />
+            </button>
         </div>
     </div>
 </div>
@@ -40,6 +57,10 @@
                 inset: 10% 0 0 0;
                 display: flex;
                 align-items: center;
+
+                  .disabled {
+                    opacity: 0.4 !important;
+                }
 
                 .track {
                     z-index: 5;
@@ -81,12 +102,12 @@
                     margin-bottom: calc(8 * var(--px));
                     image-rendering: pixelated;
                     opacity: 0.85;
-                    
-                    &:active {
-                        transform: translate(7px, 7px);
-                        transition: all;
-                        transition-duration: 100ms;
-                    }
+                }
+
+                .click:active {
+                    transform: translate(7px, 7px);
+                    transition: all;
+                    transition-duration: 100ms;
                 }
 
                 .zoom-in {

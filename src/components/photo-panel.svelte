@@ -5,11 +5,10 @@
     import Cat3 from "#lib/assets/images/placeholders/cat_3.png"
     import Media from "./media.svelte";
     import MediaModal from "./media-modal.svelte";
+    import { settings } from "#lib/stores/settings.svelte.ts";
 
     let selectedId = $state(-1);
     let modalOpen = $state(false);
-
-    let maxSlot = $state(6);
 
     function changeSelected(id: number, openModal: boolean) {
 
@@ -19,13 +18,25 @@
         }
     }
 
+    function maxSlot() {
+        if (settings.zoomMode == 1) {
+            return 6;
+        } else if (settings.zoomMode == 2) {
+            return 12;
+        } else if (settings.zoomMode == 3) {
+            return 20;
+        } else {
+            return 6;
+        }
+    }
+
     let medias: string[] = [
         Cat,
         Cat2,
         Cat3
     ]
 
-    let slots = $derived(Array.from({ length: Math.max(maxSlot, medias.length) }, (_, i) => medias[i]));
+    let slots = $derived(Array.from({ length: Math.max(maxSlot(), medias.length) }, (_, i) => medias[i]));
 
     function handleKeydown(event: KeyboardEvent) {
         switch (event.key) {
@@ -50,9 +61,9 @@
 
 <div class="photo-panel">
     <div class="bg">
-        <div class="photos">
+        <div class="photos zoom-{settings.zoomMode}">
             {#each slots as media, index}
-                <Media id={index} url={media} selected={index === selectedId} changeSelected={changeSelected} />
+                <Media id={index} url={media} selected={index === selectedId} changeSelected={changeSelected} zoomMode={settings.zoomMode} />
             {/each}
         </div>
     </div>
@@ -70,7 +81,7 @@
         align-items: center;
 
         .bg {
-            width: calc(100% - 5em);
+            width: calc(100% * 300 / 320);
             aspect-ratio: 256 / 160;
             background: url("../lib/assets/images/ui/photo-panel.png") center / 100% 100% no-repeat;
             image-rendering: pixelated;
@@ -81,13 +92,22 @@
         .photos {
             --px: calc(100cqw / 256);
             position: absolute;
-            left: calc(19 * var(--px));
-            top: calc(21 * var(--px));
             display: grid;
-            grid-template-columns: repeat(3, calc(66 * var(--px)));
-            grid-auto-rows: calc(52 * var(--px));
-            column-gap: calc(10 * var(--px));
-            row-gap: calc(14 * var(--px));
+
+            @each $zoom, $cols, $w, $h, $col-gap, $row-gap, $left, $top in
+                (1, 3, 66, 52, 10, 14, 19, 21),
+                (2, 4, 50, 40, 6, 3, 19, 17),
+                (3, 5, 42, 34, 4, 0, 15, 12)
+            {
+                &.zoom-#{$zoom} {
+                    grid-template-columns: repeat($cols, calc($w * var(--px)));
+                    grid-auto-rows: calc($h * var(--px));
+                    column-gap: calc($col-gap * var(--px));
+                    row-gap: calc($row-gap * var(--px));
+                    left: calc($left * var(--px));
+                    top: calc($top * var(--px));
+                }
+            }
         }
     }
 
