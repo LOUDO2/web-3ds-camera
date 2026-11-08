@@ -48,6 +48,8 @@
 
 		.camera {
 			flex: 228 1 0;
+			opacity: 0.5;
+			pointer-events: none;
 		}
 
 		.options {
