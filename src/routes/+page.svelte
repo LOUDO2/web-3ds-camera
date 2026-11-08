@@ -7,7 +7,7 @@
 </script>
 
 <svelte:head>
-	<title>3DS Camera</title>
+	<title>3DS Camera - WEB</title>
 </svelte:head>
 
 <main class="screen" style:background-color={settings.themeColor}>
