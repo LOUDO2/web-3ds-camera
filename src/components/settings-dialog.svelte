@@ -25,12 +25,14 @@
         <div class="frame">
             <img src={DialogSettings} alt="Dialog settings" />
             <div class="inputs">
-                <input class="color" type="color" bind:value={settings.themeColor} onchange={() => localStorage.setItem("themeColor", settings.themeColor)} />
-                <button class="button close-button" aria-label="Close button" onclick={close}>
-                    <img src={CloseButton} alt="" />
-                </button>
+                <label class="color-field" style:--swatch={settings.themeColor}>
+                    <input class="color" type="color" bind:value={settings.themeColor} onchange={() => localStorage.setItem("themeColor", settings.themeColor)} />
+                </label>
                 <button class="button reset-button" aria-label="Reset button" onclick={resetColor}>
                     <img src={ResetButton} alt="" />
+                </button>
+                <button class="button close-button" aria-label="Close button" onclick={close}>
+                    <img src={CloseButton} alt="" />
                 </button>
             </div>
         </div>
@@ -73,7 +75,7 @@
 
         .dialog {
             animation: slidein 400ms;
-            padding: 2em;
+            padding: calc(100% * 5 / 320) calc(100% * 6 / 320);
 
             .frame {
                 position: relative;
@@ -85,10 +87,35 @@
             }
 
             .inputs {
-                .color {
+                .color-field {
                     position: absolute;
-                    top: 23%;
-                    left: 25%;
+                    top: calc(100% * 41.5 / 230);
+                    left: calc(100% * 77 / 308);
+                    width: calc(100% * 46 / 308);
+                    height: calc(100% * 24 / 230);
+                    box-sizing: border-box;
+                    border: 1px solid #8a8a8a;
+                    background: white;
+                    cursor: pointer;
+
+                    &::after {
+                        content: "";
+                        position: absolute;
+                        inset: calc(100% * 2 / 24) calc(100% * 2 / 46);
+                        background: var(--swatch);
+                    }
+
+                    .color {
+                        position: absolute;
+                        inset: 0;
+                        width: 100%;
+                        height: 100%;
+                        margin: 0;
+                        padding: 0;
+                        border: none;
+                        opacity: 0;
+                        cursor: pointer;
+                    }
                 }
 
                 .button {
@@ -119,9 +146,9 @@
 
                 .reset-button {
                     position: absolute;
-                    top: 21%;
-                    left: 32%;
-                    width: 10%;
+                    top: calc(100% * 41.5 / 230);
+                    left: calc(100% * 131 / 308);
+                    width: calc(100% * 50 / 308);
                 }
             }
         }
