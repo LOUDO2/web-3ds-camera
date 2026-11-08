@@ -12,6 +12,7 @@
     import { animZoom, isZooming } from "#lib/stores/zoomingAnim.svelte.ts";
     import { album, dragBy, maxScroll, rate, release, selectedRate, setZoom, step } from "#lib/stores/album.svelte.ts";
     import { velocityTracker } from "#lib/drag.ts";
+    import Bird from "./bird.svelte";
 
     function changeZoom(mode: string) {
         if (isZooming()) return;
@@ -57,6 +58,7 @@
 </script>
 
 <div class="slider">
+    <Bird />
     <div class="background">
         <div class="border fill" style:background-color={settings.themeColor} style:mask-image="url({Border})"></div>
         <img src={BorderEdge} class="border border-edge" alt="">

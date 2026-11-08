@@ -12,6 +12,7 @@
 
     function resetColor() {
         settings.themeColor = "#faa000"; 
+        localStorage.setItem("themeColor", settings.themeColor)
     }
 
     function onAnimationEnd() {
